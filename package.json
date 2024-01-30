@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mgechev/js-vnc.git"
+  },
+  "dependencies": {
+    "ssh2": "^1.15.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "description": "js-vnc-demo-project ===================",
+  "bugs": {
+    "url": "https://github.com/mgechev/js-vnc/issues"
+  },
+  "homepage": "https://github.com/mgechev/js-vnc#readme",
+  "main": "server.js",
+  "author": "",
+  "license": "ISC"
+}
