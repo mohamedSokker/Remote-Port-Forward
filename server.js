@@ -1,12 +1,15 @@
 const Client = require("ssh2").Client;
 const fs = require("fs");
+const net = require("net");
 
 const sshConfig = {
   host: "192.168.1.7",
   port: 22,
   username: "osama",
-  privateKey: fs.readFileSync("/sdcard/shareit/id_rsa"),
+  privateKey: fs.readFileSync("C:/users/sokker/.ssh/id_rsa"),
 };
+
+const screenIP = "192.168.1.5";
 
 const addTcpConnection = async (localPort, remoteAddress, remotePort) => {
   try {
@@ -45,20 +48,23 @@ const addTcpConnection = async (localPort, remoteAddress, remotePort) => {
       const stream = accept();
       console.log(info);
       try {
-        conn.forwardOut(
-          info.srcIP,
-          info.srcPort,
-          remoteAddress,
-          remotePort,
-          (err, channel) => {
-            if (err) {
-              console.error("Error forwarding connection:", err);
-              return reject();
-            }
-
+        const channel = net.createConnection(
+          { host: screenIP, port: remotePort },
+          () => {
+            console.log("Server connected");
             channel.pipe(stream).pipe(channel);
           }
         );
+
+        channel.on("close", () => {
+          console.log(`Server closed`);
+        });
+        channel.on("end", () => {
+          console.log(`Server Ended`);
+        });
+        channel.on("error", (err) => {
+          console.log(`Server Error: ${err.message}`);
+        });
       } catch (err) {
         console.log(`forward Error: ${err.message}`);
       }
@@ -83,13 +89,13 @@ const addTcpConnection = async (localPort, remoteAddress, remotePort) => {
 };
 
 try {
-  addTcpConnection(8000, "192.168.1.5", 5900);
+  addTcpConnection(8000, screenIP, 5900);
 } catch (err) {
   console.log(`addTcpConnection1 Error: ${err.message}`);
 }
 
 try {
-  addTcpConnection(9000, "192.168.1.5", 22);
+  addTcpConnection(9000, screenIP, 22);
 } catch (err) {
   console.log(`addTcpConnection2 Error: ${err.message}`);
 }
